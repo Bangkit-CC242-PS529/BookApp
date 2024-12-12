@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.bookapp.ui.screen.RandomBooksScreen
 import com.example.bookapp.ui.screens.ReadingListScreen
-import com.example.bookapp.ui.screens.SoonScreen
 import com.example.bookapp.ui.screens.SplashScreen
 import com.example.bookapp.ui.screens.WordScreen
 
@@ -45,7 +45,7 @@ fun AppNavHost(navController: NavHostController, isConnected: Boolean) {
             )
         }
         composable(Routes.Soon.route) {
-            SoonScreen(
+            RandomBooksScreen (
                 isConnected = isConnected,
                 onNavigateToWord = { navController.navigate(Routes.Word.route) },
                 onNavigateToReadingList = { navController.navigate(Routes.ReadingList.route) }

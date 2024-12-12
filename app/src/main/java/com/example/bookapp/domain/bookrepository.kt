@@ -33,20 +33,41 @@ class BookRepository(private val dao: BookDao) {
         return dao.countBooks()
     }
 
-    suspend fun getRecommendations(title: String, k:Int=5): Resource<List<Book>> {
+    suspend fun getRecommendations(title: String, k: Int = 5): Resource<List<Book>> {
         return try {
-            val response = NetworkClient.apiService.getRecommendations(RecommendRequest(title, k))
+            val response = NetworkClient.wordRecommendationApi.getRecommendations(RecommendRequest(title, k))
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body?.recommendations != null && body.recommendations.isNotEmpty()) {
-                    val books = body.recommendations.filter { it.ISBN!=null && it.Authors!=null && it.Titles!=null }
-                        .map { Book(it.ISBN!!, it.Authors!!, it.Titles!!) }
+                    val books = body.recommendations.map {
+                        Book(it.ISBN ?: "N/A", it.Authors ?: "Unknown", it.Titles ?: "Untitled")
+                    }
                     Resource.Success(books)
                 } else {
                     Resource.Error("No recommendations found.")
                 }
             } else {
-                // Error from server, parse error message if available
+                Resource.Error("Error: ${response.errorBody()?.string() ?: "Unknown"}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Network error: ${e.message}")
+        }
+    }
+
+    suspend fun getRandomRecommendations(): Resource<List<Book>> {
+        return try {
+            val response = NetworkClient.randomRecommendationApi.getRandomRecommendations()
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body?.recommended_books != null && body.recommended_books.isNotEmpty()) {
+                    val books = body.recommended_books.map {
+                        Book(it.ISBN ?: "N/A", it.Authors ?: "Unknown", it.Titles ?: "Untitled")
+                    }
+                    Resource.Success(books)
+                } else {
+                    Resource.Error("No recommendations found.")
+                }
+            } else {
                 val errorMessage = response.errorBody()?.string() ?: "Unknown error"
                 Resource.Error(errorMessage)
             }
@@ -54,4 +75,5 @@ class BookRepository(private val dao: BookDao) {
             Resource.Error("Network error: ${e.message}")
         }
     }
+
 }

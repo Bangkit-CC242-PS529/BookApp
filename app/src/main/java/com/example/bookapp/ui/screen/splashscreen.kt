@@ -1,6 +1,5 @@
 package com.example.bookapp.ui.screens
 
-import android.view.animation.BounceInterpolator
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -78,7 +77,7 @@ fun SplashScreen(onSplashDone: () -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                "Book Recommendation App",
+                "Your Best Recomendation for \n Literature",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
